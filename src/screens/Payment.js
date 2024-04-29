@@ -1,4 +1,5 @@
-import React from 'react'
+import React from 'react';
+import axios from 'axios';
 import Header from '../components/Header';
 import { useSelector, useDispatch } from "react-redux";
 import { useState,useEffect } from 'react';
@@ -6,12 +7,42 @@ import Footer from '../components/Footer';
 export default function Payment() {
     const listTaskStore = useSelector((state) => state.product.productList);
     const totalPrice = listTaskStore.reduce((acc, item) => acc + item.price*item.quantity, 0);
+    const[paymentRequest,setpaymentRequest]=  useState()
     var nf = new Intl.NumberFormat()
     const[input, setinput]=useState({
       order_list: "",
       product_id: ""
     })
-
+    const onchaneinput=(event)=>{
+        setpaymentRequest({...paymentRequest,[ event.target.name ] : event.target.value })
+    }
+    const VNPAY=async ()=>{
+      
+       
+        try {
+            const chitiet=listTaskStore.map(item=>{
+                return {IdProduct: item.id,Price: item.price, Quantity: item.quantity,Id:0,IdOrder:0,Name:paymentRequest.name,Address:paymentRequest.address,PhoneNumber:paymentRequest.phoneNumber,PriceSum:totalPrice,Orderdate:new Date()}
+            })
+           
+            var myJsonString = JSON.stringify(chitiet);
+        const res = await axios.post('https://localhost:7084/api/Orders/ProcessPayment',myJsonString,{
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          });
+          if(res.status==200){
+            alert("Thanh toán  thành công")
+            const newWindow = window.open(res.data, '_blank', 'noopener,noreferrer');
+            if (newWindow) newWindow.opener = null;
+          }else{
+            alert("Thanh toán không thành công")
+          }
+        console.log(res);
+    } catch (error) {
+     console.log(error);
+        alert("Thanh toán không thành công")
+      }
+    }
   return (
     <div   className='bg-slate-100 h-full'>
     <Header /> 
@@ -40,11 +71,11 @@ export default function Payment() {
             )       
         })} 
         </div>
-        <div className='justify-center items-center  fixed backdrop-blur-sm w 1/3  contents '  >
-                <div className="border rounded-lg border-gray-300 p-4 bg-white h-1/2">
+        <div className='justify-center items-center  fixed backdrop-blur-sm   contents '  >
+                <div className="border rounded-lg border-gray-300 p-4h-1/2 w-1/2">
                 <div className="flex justify-end">
                 </div>             
-                    <form className="w-full max-w-lg bg-slate-100">
+                    <form className="w-full max-w-lg bg-slate-100 ml-10 mt-4">
                         <div className="flex flex-wrap -mx-3 mb-6">
                          <div className="w-full px-3 mb-6 md:mb-0  ">
                             <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-first-name text 2xl flex">
@@ -63,7 +94,7 @@ export default function Payment() {
                                     type="text" 
                                     name="name"
                                     // value={inputvalue.name}
-                                    // onChange={onchaneinput}
+                                     onChange={onchaneinput}
                                 />                  
                             </div>
 
@@ -76,44 +107,33 @@ export default function Payment() {
                                 <input className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
                                     id="grid-first-name" 
                                     type="text" 
-                                    name="name"
+                                    name="address"
                                     // value={inputvalue.name}
-                                    // onChange={onchaneinput}
+                                     onChange={onchaneinput}
                                 />                  
                             </div>
                         </div>
                         <div className="flex flex-wrap -mx-3 mb-6">
-                            <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+                            <div className="w-full md:w-full px-3 mb-6 md:mb-0">
                                 <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-first-name">
                                Số Điện Thoại:
                                 </label>
                                 <input className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"  
                                     id="grid-first-name"
-                                    type="number"
-                                    name="PhoneNumber"
+                                    type="text"
+                                    name="phoneNumber"
                                     // value={inputvalue.quantity}
-                                    // onChange={onchaneinput} 
+                                     onChange={onchaneinput} 
                                 />                  
                             </div>
-                            <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-                                <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-first-name">
-                                 Ngày Đặt Hàng
-                                </label>
-                                <input className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"  
-                                    id="grid-first-name"
-                                    type="Date"
-                                    name="Orderdate"
-                                    // value={inputvalue.quantity}
-                                    // onChange={onchaneinput} 
-                                />                  
-                            </div>
+                           
                             
                         </div> 
                         <div className='w-full bg-gray-800 h-14 flex justify-center items-center uppercase font-medium text-white cursor-pointer   hover:bg-red-600 '>
-                        THANH TOÁN
+                        THANH TOÁN KHI NHẬN HÀNG
                         </div>   
-                        <div className='mt-5 w-full bg-gray-800 h-14 flex justify-center items-center uppercase font-medium text-white cursor-pointer   hover:bg-red-600 '>
-                        THANH TOÁN VNP
+                        <div className='mt-5 w-full bg-gray-800 h-14 flex justify-center items-center uppercase font-medium text-white cursor-pointer   hover:bg-red-600 '  onClick={VNPAY}>
+                        THANH TOÁN TRỰC TUYẾN VNPAY
                         </div>     
                     </form>
                 </div>

@@ -26,8 +26,9 @@ export default function Detail() {
     },[]);
 
     const onAddProduct=(datadetall)=> () =>{
-      console.log(datadetall)
+     
       dispatch(addProduct({ ...datadetall, quantity: 1}));
+      alert("Thêm thành công")
     }
   return (
     <div >
@@ -42,11 +43,13 @@ export default function Detail() {
               <div className='my-2 border-dashed border-y-2 border-gray-500 py-4'>
                 {datadetall?.description}
               </div>
+              
+              <div className='text-rose-600 text-3xl  '>{nf.format(datadetall?.price)}đ/ Kg</div>
               <div className='flex  '>
                 <div onClick={onAddProduct(datadetall)} className=' bg-gray-800 h-11 flex justify-center items-center uppercase font-medium text-white cursor-pointer mt-20'>
-                  Add to cart
+                 Thêm vào giỏ
                 </div>
-                <div className='text-rose-600 text-3xl mt-20 ml-20'>{nf.format(datadetall?.price)}đ</div>
+               
               </div>
               
             </div>

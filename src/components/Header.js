@@ -25,21 +25,14 @@ export default function Header() {
         </div>
         <div className='flex w-1/2 h-full flex-row items-center justify-between  bg-slate-200'>
           <div className='ml-4 relative w-64'>
-            <input
-              className='border rounded-full pl-2 w-full h-7'
-              placeholder='Search here'
-            />
-            <FaSearch className='absolute top-1.5 right-2.5' />
           </div>
           <div className='flex flex-row'>
-            <Link to='/login'>
-              <FaUser className='text-2xl mr-10 text-gray-300' />
-            </Link>
+        
 
             <Link to='/cart'>
               <FaShoppingCart className='text-2xl mr-10 text-gray-300' />
             </Link>
-            <FiLogOut className='text-2xl mr-10 text-gray-300' />
+          
           </div>
         </div>
       </div>
